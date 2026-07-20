@@ -1,53 +1,34 @@
 import axios from "axios";
 import path from "path";
-
-const PYTHON_API = "http://127.0.0.1:8000/api";
+import { AI_SERVICE } from "../config/ai.js";
 
 export const indexDocument = async (payload) => {
-
-    console.log("Calling Python...");
+    console.log("Calling AI Service...");
     console.log(payload);
 
     payload.file_path = path.resolve(payload.file_path);
 
     const response = await axios.post(
-
-        `${PYTHON_API}/documents/index`,
-
+        `${AI_SERVICE.BASE_URL}/documents/index`,
         payload
-
     );
 
     return response.data;
-
 };
 
 export const askAI = async (
-
     conversationId,
-
     question,
-
     department
-
 ) => {
-
     const response = await axios.post(
-
-        `${PYTHON_API}/chat`,
-
+        `${AI_SERVICE.BASE_URL}/chat`,
         {
-
             conversationId,
-
             question,
-
             department
-
         }
-
     );
 
-    return response.data.data;
-
+    return response.data;
 };
