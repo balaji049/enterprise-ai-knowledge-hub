@@ -1,45 +1,44 @@
-from sentence_transformers import SentenceTransformer
+from google import genai
+
+from app.core.config import GEMINI_API_KEY
 
 
 class EmbeddingModel:
 
-    _model = None
+    client = genai.Client(api_key=GEMINI_API_KEY)
 
-    @classmethod
-    def load(cls):
-
-        if cls._model is None:
-
-            cls._model = SentenceTransformer(
-
-                "BAAI/bge-small-en-v1.5"
-
-            )
-
-        return cls._model
+    MODEL = "gemini-embedding-001"
 
     @classmethod
     def encode(cls, text):
 
-        model = cls.load()
+        response = cls.client.models.embed_content(
+            model=cls.MODEL,
+            contents=text,
+            config={
+                "task_type": "RETRIEVAL_QUERY"
+            }
+        )
 
-        return model.encode(
-
-            text,
-
-            normalize_embeddings=True
-
-        ).tolist()
+        return response.embeddings[0].values
 
     @classmethod
     def encode_batch(cls, texts):
 
-        model = cls.load()
+        embeddings = []
 
-        return model.encode(
+        for text in texts:
 
-            texts,
+            response = cls.client.models.embed_content(
+                model=cls.MODEL,
+                contents=text,
+                config={
+                    "task_type": "RETRIEVAL_DOCUMENT"
+                }
+            )
 
-            normalize_embeddings=True
+            embeddings.append(
+                response.embeddings[0].values
+            )
 
-        ).tolist()
+        return embeddings

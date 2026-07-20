@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.health import router as health_router
-#from app.api.documents import router as document_router
+from app.api.documents import router as document_router
 from app.api.chat import router as chat_router
 from app.api.test import router as test_router
 
@@ -22,13 +22,13 @@ app.include_router(
     prefix="/api"
 )
 
-#app.include_router(
+app.include_router(
 
-#    document_router,
+    document_router,
 
-#    prefix="/api"
+    prefix="/api"
 
-#)
+)
 
 app.include_router(
     health_router,

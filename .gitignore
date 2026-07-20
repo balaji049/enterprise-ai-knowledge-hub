@@ -1,250 +1,33 @@
-# =========================================================
-# Enterprise AI Knowledge Hub
-# .gitignore
-# =========================================================
-
-############################
-# OS Files
-############################
-
-.DS_Store
-Thumbs.db
-desktop.ini
-
-############################
-# IDE
-############################
-
-.vscode/
-.idea/
-*.iml
-
-############################
-# Logs
-############################
-
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-############################
-# Environment Variables
-############################
-
-.env
-.env.*
-!.env.example
-
-############################
-# Node.js
-############################
-
-node_modules/
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-############################
-# React Build
-############################
-
-client/build/
-client/dist/
-
-############################
-# Server Build
-############################
-
-server/build/
-server/dist/
-
-############################
-# Python
-############################
-
-__pycache__/
-*.py[cod]
-*$py.class
-
-############################
-# Python Virtual Environments
-############################
-
-.venv/
-venv/
-ENV/
-env/
-
-############################
-# Python Packaging
-############################
-
-*.egg-info/
-.eggs/
-pip-wheel-metadata/
-
-############################
-# Pytest
-############################
-
-.pytest_cache/
-.coverage
-htmlcov/
-
-############################
-# Jupyter
-############################
-
-.ipynb_checkpoints/
-
-############################
-# ChromaDB
-############################
-
-python-ai/chroma_db/
-server/chroma_db/
-chroma_db/
-
-############################
-# Uploaded Documents
-############################
-
-server/src/uploads/
-python-ai/uploads/
-uploads/
-
-############################
-# Temporary Files
-############################
-
-*.tmp
-*.temp
-*.bak
-*.swp
-
-############################
-# Cache
-############################
-
-.cache/
-.cache-loader/
-
-############################
-# Runtime
-############################
-
-*.pid
-*.seed
-
-############################
-# Coverage
-############################
-
-coverage/
-*.lcov
-
-############################
-# MongoDB
-############################
-
-*.wt
-*.lock
-
-############################
-# Docker
-############################
-
-docker-compose.override.yml
-
-############################
-# Mac
-############################
-
-.AppleDouble
-.LSOverride
-
-############################
-# Linux
-############################
-
-*~
-
-############################
-# Windows
-############################
-
-ehthumbs.db
-
-############################
-# Vercel
-############################
-
-.vercel/
-
-############################
-# Netlify
-############################
-
-.netlify/
-
-############################
-# Misc
-############################
-
-*.zip
-*.tar
-*.gz
-*.rar
-
-############################
-# Generated AI Files
-############################
-
-*.faiss
-*.pkl
-*.pickle
-*.db
-*.sqlite
-*.sqlite3
-
-############################
-# Secrets
-############################
-
-*.pem
-*.key
-*.crt
-*.pfx
-
-############################
-# Local Config
-############################
-
-config.local.*
-
-
-# Node
-node_modules/
-npm-debug.log
-
 # Python
 .venv/
 __pycache__/
 *.pyc
-
-# Environment
+*.pyo
 .env
-.env.*
 
-# Uploads
-server/src/uploads/
+# ChromaDB
+vector_db/
 
-# Vector DB
-python-ai/vectordb/
+# Logs
+*.log
 
+# Node
+node_modules/
+
+# Build
+dist/
+build/
+
+# VS Code
+.vscode/
+python-ai/venv/
+python-ai/.venv/
+python-ai/vector_db/
+
+node_modules/
+.env
+__pycache__/
+*.pyc
 # OS
 .DS_Store
 Thumbs.db
