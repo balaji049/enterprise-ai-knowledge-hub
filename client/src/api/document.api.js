@@ -24,6 +24,19 @@ export const getDocuments = () =>
 
     API.get("/documents");
 
+export const getKnowledgeDocuments = () =>
+    API.get("/documents");
+
+
+
+export const getDocumentStats = () =>
+
+    API.get("/documents/stats");
+
+export const getDocument = id =>
+
+    API.get(`/documents/${id}`);
+
 export const uploadDocument = formData =>
 
     API.post(

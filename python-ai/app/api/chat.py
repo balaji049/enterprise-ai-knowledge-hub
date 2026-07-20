@@ -19,6 +19,7 @@ def chat(request: ChatRequest):
 
         request.department
 
+
     )
 
     return {

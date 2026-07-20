@@ -11,11 +11,32 @@ class ResponseParser:
 
     ):
 
+        unique_sources = []
+        seen = set()
+
+        for source in sources:
+
+            key = (
+                source["document"],
+                source["page"]
+            )
+
+            if key in seen:
+                continue
+
+            seen.add(key)
+
+            unique_sources.append({
+                "document": source["document"],
+                "page": source["page"],
+                "score": source["score"]
+            })
+
         return {
 
             "answer": answer,
 
-            "sources": sources,
+            "sources": unique_sources,
 
             "response_time": response_time
 

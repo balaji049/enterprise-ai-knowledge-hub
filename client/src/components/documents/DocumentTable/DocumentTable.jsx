@@ -81,15 +81,17 @@ export default function DocumentTable({
 
                     <tr>
 
-                        <th>Document</th>
+                        <th>Document ↑</th>
 
-                        <th>Department</th>
+                        <th>Type</th>
 
-                        <th>Category</th>
+                        <th>Size</th>
 
-                        <th>Uploaded By</th>
+                        <th>Uploaded ↓</th>
 
-                        <th>Status</th>
+                        <th>Uploaded</th>
+
+                        <th>Status ↑</th>
 
                         <th>Actions</th>
 
@@ -105,7 +107,7 @@ export default function DocumentTable({
 
                             <DocumentRow
 
-                                key={document.id}
+                                key={document._id}
 
                                 document={document}
 

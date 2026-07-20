@@ -102,15 +102,22 @@ export const createEmployee = asyncHandler(
 
     ) => {
 
+        console.log(req.body);
+
         const employee =
+    await employeeService.createEmployee(
 
-            await employeeService.createEmployee({
+        {
 
-                ...req.body,
+            ...req.body,
 
-                department: req.user.department._id
+            department: req.user.department._id
 
-            });
+        },
+
+        req.user
+
+    );
 
         successResponse(
 
@@ -165,22 +172,23 @@ export const updateEmployee = asyncHandler(
         }
 
         const updatedEmployee =
+    await employeeService.updateEmployee(
 
-            await employeeService.updateEmployee(
+        req.params.id,
 
-                req.params.id,
+        req.user.department._id,
 
-                req.user.department._id,
+        {
 
-                {
+            ...req.body,
 
-                    ...req.body,
+            department: req.user.department._id
 
-                    department: req.user.department._id
+        },
 
-                }
+        req.user
 
-            );
+    );
 
         successResponse(
 
@@ -234,11 +242,13 @@ export const deleteEmployee = asyncHandler(
 
         await employeeService.deleteEmployee(
 
-            req.params.id,
+    req.params.id,
 
-            req.user.department._id
+    req.user.department._id,
 
-        );
+    req.user
+
+);
 
         successResponse(
 

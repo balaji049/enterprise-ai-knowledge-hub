@@ -57,7 +57,15 @@ export default function AskAIHome() {
 
             const data = await conversationService.getConversations();
 
-            setConversations(data);
+setConversations(data);
+
+if (data.length > 0) {
+    setSelectedConversation(data[0]._id);
+
+    const messages = await conversationService.getMessages(data[0]._id);
+
+    setMessages(messages);
+}
 
         }
 
@@ -137,6 +145,24 @@ export default function AskAIHome() {
 
     };
 
+    const handleConversationTitleChange = (
+    conversationId,
+    title
+) => {
+
+    setConversations(previous =>
+        previous.map(conversation =>
+            conversation._id === conversationId
+                ? {
+                    ...conversation,
+                    title
+                }
+                : conversation
+        )
+    );
+
+};
+
     return (
 
         <div className={styles.layout}>
@@ -188,6 +214,11 @@ export default function AskAIHome() {
                     loading={loading}
 
                     setLoading={setLoading}
+
+                    onConversationTitleChange={
+        handleConversationTitleChange
+    }
+
 
                 />
 

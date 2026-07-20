@@ -36,6 +36,13 @@ class IndexingService:
 
         )
 
+        print("\n===== LOADED PAGES =====")
+        print("Pages:", len(pages))
+        for i, page in enumerate(pages[:2]):
+            print(f"Page {page['page']}")
+            print(f"Characters: {len(page['text'])}")
+            print(repr(page["text"][:300]))
+
         # Step 2
 
         pages = TextCleaner.clean_pages(
@@ -53,6 +60,10 @@ class IndexingService:
             metadata
 
         )
+        print("\n===== CHUNKS =====")
+        print("Chunks:", len(chunks))
+        for i, chunk in enumerate(chunks[:2]):
+            print(repr(chunk["text"][:300]))
 
         # Step 4
 

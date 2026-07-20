@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 
 import DashboardHome from "../../../components/dashboard/DashboardHome";
-import * as dashboardService from "../../../services/dashboard.service";
-
+import * as dashboardService from "../../../services/employeeDashboard.service";
 export default function Dashboard() {
 
     const user = JSON.parse(
@@ -16,10 +15,23 @@ export default function Dashboard() {
     }, []);
 
     const loadDashboard = async () => {
-        const response =
+
+    try {
+
+        const dashboard =
             await dashboardService.getDashboard();
-        setData(response.data.data);
-    };
+
+        setData(dashboard);
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+};
 
     return (
 

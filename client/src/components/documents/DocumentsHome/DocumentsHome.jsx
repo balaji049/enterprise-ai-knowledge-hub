@@ -71,6 +71,10 @@ export default function DocumentsHome({
 
     selectedDocument,
 
+    canUpload = true,
+    canRename = true,
+    canDelete = true,
+
     onSearch,
 
     onDepartmentChange,
@@ -140,21 +144,23 @@ export default function DocumentsHome({
             {/* Upload */}
             {/* ====================================== */}
 
-            <motion.div
+            {
+    canUpload && uploading && (
 
-                variants={item}
+        <motion.div variants={item}>
 
-            >
+            <UploadZone
 
-                <UploadZone
+                uploading={uploading}
 
-                    uploading={uploading}
+                onUpload={onUpload}
 
-                    onUpload={onUpload}
+            />
 
-                />
+        </motion.div>
 
-            </motion.div>
+    )
+}
 
             {/* ====================================== */}
             {/* Upload Progress */}

@@ -3,7 +3,9 @@ import { motion } from "framer-motion";
 import DocumentToolbar from "../DocumentToolbar";
 import DocumentTable from "../DocumentTable";
 import UploadDocumentModal from "../UploadDocumentModal";
+import PreviewModal from "../PreviewModal";
 import EmptyDocuments from "../EmptyDocuments";
+import DocumentStats from "../DocumentStats";
 
 import styles from "./DocumentsHome.module.css";
 
@@ -53,6 +55,8 @@ export default function DocumentsHome({
 
     documents,
 
+    stats,
+
     loading,
 
     search,
@@ -73,13 +77,17 @@ export default function DocumentsHome({
 
     onUpload,
 
-    onEdit,
+    onPreview,
+
+    onDownload,
 
     onDelete,
 
     onSave,
 
-    onClose
+    onClose,
+
+    onClosePreview
 
 }) {
 
@@ -97,8 +105,6 @@ export default function DocumentsHome({
 
         >
 
-            {/* Header */}
-
             <motion.div
 
                 variants={item}
@@ -109,23 +115,31 @@ export default function DocumentsHome({
 
                 <div>
 
-                    <h1>
+                    <h1>Document Management</h1>
 
-                        Document Management
+                    <p>Upload and manage department documents.</p>
 
-                    </h1>
+                </div>
 
-                    <p>
+                <div className={styles.departmentBanner}>
 
-                        Upload and manage department documents.
+                    <div>
 
-                    </p>
+                        <h2>Information Technology</h2>
+
+                        <p>Department Knowledge Repository</p>
+
+                    </div>
 
                 </div>
 
             </motion.div>
 
-            {/* Toolbar */}
+            <motion.div variants={item}>
+
+                <DocumentStats stats={stats} />
+
+            </motion.div>
 
             <motion.div variants={item}>
 
@@ -149,41 +163,39 @@ export default function DocumentsHome({
 
             </motion.div>
 
-            {/* Table */}
-
             <motion.div variants={item}>
 
                 {
 
                     documents.length > 0
 
-                        ?
+                        ? (
 
-                        <DocumentTable
+                            <DocumentTable
 
-                            documents={documents}
+                                documents={documents}
 
-                            loading={loading}
+                                loading={loading}
 
-                            onEdit={onEdit}
+                                onPreview={onPreview}
 
-                            onDelete={onDelete}
+                                onDownload={onDownload}
 
-                        />
+                                onDelete={onDelete}
 
-                        :
+                            />
 
-                        <EmptyDocuments
+                        )
 
-                            onUpload={onUpload}
+                        : (
 
-                        />
+                            <EmptyDocuments onUpload={onUpload} />
+
+                        )
 
                 }
 
             </motion.div>
-
-            {/* Upload Modal */}
 
             {
 
@@ -191,11 +203,31 @@ export default function DocumentsHome({
 
                     <UploadDocumentModal
 
-                        document={selectedDocument}
+                        document={null}
 
                         onSave={onSave}
 
                         onClose={onClose}
+
+                    />
+
+                )
+
+            }
+
+            {
+
+                selectedDocument && (
+
+                    <PreviewModal
+
+                        document={selectedDocument}
+
+                        url={selectedDocument.fileUrl}
+
+                        onClose={onClosePreview}
+
+                        onDownload={onDownload}
 
                     />
 

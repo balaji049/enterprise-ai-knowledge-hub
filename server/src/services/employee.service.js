@@ -1,16 +1,15 @@
 import Employee from "../models/Employee.js";
-import bcrypt from "bcryptjs";
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import { logActivity } from "./activityLogger.service.js";
 
 export const getEmployees = async (departmentId) => {
 
-    return await Employee
+    return await Employee.find({
 
-        .find({
+        department: departmentId
 
-            department: departmentId
-
-        })
+    })
 
         .populate("user", "-password")
 
@@ -70,9 +69,7 @@ export const getEmployeesPaginated = async (
 
     }
 
-    const skip =
-
-        (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
     const [
 
@@ -112,11 +109,7 @@ export const getEmployeesPaginated = async (
 
         page,
 
-        totalPages: Math.ceil(
-
-            total / limit
-
-        )
+        totalPages: Math.ceil(total / limit)
 
     };
 
@@ -130,15 +123,13 @@ export const getEmployeeById = async (
 
 ) => {
 
-    return await Employee
+    return await Employee.findOne({
 
-        .findOne({
+        _id: id,
 
-            _id: id,
+        department: departmentId
 
-            department: departmentId
-
-        })
+    })
 
         .populate("user", "-password")
 
@@ -148,7 +139,13 @@ export const getEmployeeById = async (
 
 };
 
-export const createEmployee = async (data) => {
+export const createEmployee = async (
+
+    data,
+
+    currentUser
+
+) => {
 
     const existing = await User.findOne({
 
@@ -180,7 +177,7 @@ export const createEmployee = async (data) => {
 
         password,
 
-        role: data.role.toLowerCase(),
+        role: (data.role || "employee").toLowerCase(),
 
         department: data.department,
 
@@ -206,7 +203,7 @@ export const createEmployee = async (data) => {
 
     });
 
-    return await Employee.findById(employee._id)
+    const result = await Employee.findById(employee._id)
 
         .populate("user", "-password")
 
@@ -214,19 +211,39 @@ export const createEmployee = async (data) => {
 
         .populate("manager");
 
-};
+    await logActivity({
 
-export const updateEmployee = async (
+        module: "Employees",
+
+        action: "Create",
+
+        target: result.user.fullName,
+
+        details: `Employee "${result.user.fullName}" created`,
+
+        performedBy: currentUser._id,
+
+        department: currentUser.department._id,
+
+        status: "Success"
+
+    });
+
+    return result;
+
+};export const updateEmployee = async (
 
     id,
 
     departmentId,
 
-    data
+    data,
+
+    currentUser
 
 ) => {
 
-    return await Employee.findOneAndUpdate(
+    const employee = await Employee.findOneAndUpdate(
 
         {
 
@@ -246,7 +263,39 @@ export const updateEmployee = async (
 
         }
 
-    );
+    )
+
+        .populate("user", "-password")
+
+        .populate("department")
+
+        .populate("manager");
+
+    if (!employee) {
+
+        return null;
+
+    }
+
+    await logActivity({
+
+        module: "Employees",
+
+        action: "Update",
+
+        target: employee.user.fullName,
+
+        details: `Employee "${employee.user.fullName}" updated`,
+
+        performedBy: currentUser._id,
+
+        department: currentUser.department._id,
+
+        status: "Success"
+
+    });
+
+    return employee;
 
 };
 
@@ -254,16 +303,48 @@ export const deleteEmployee = async (
 
     id,
 
-    departmentId
+    departmentId,
+
+    currentUser
 
 ) => {
 
-    return await Employee.findOneAndDelete({
+    const employee = await Employee.findOne({
 
         _id: id,
 
         department: departmentId
 
+    }).populate("user", "-password");
+
+    if (!employee) {
+
+        return null;
+
+    }
+
+    await Employee.findByIdAndDelete(employee._id);
+
+    await User.findByIdAndDelete(employee.user._id);
+
+    await logActivity({
+
+        module: "Employees",
+
+        action: "Delete",
+
+        target: employee.user.fullName,
+
+        details: `Employee "${employee.user.fullName}" deleted`,
+
+        performedBy: currentUser._id,
+
+        department: currentUser.department._id,
+
+        status: "Success"
+
     });
+
+    return employee;
 
 };

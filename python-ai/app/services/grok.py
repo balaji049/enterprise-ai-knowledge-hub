@@ -18,6 +18,16 @@ class GrokService:
 
         )
 
+        self.last_usage = {
+
+            "prompt_tokens": 0,
+
+            "completion_tokens": 0,
+
+            "total_tokens": 0
+
+        }
+
     def generate(self, prompt):
 
         print("Calling Groq...")
@@ -43,6 +53,18 @@ class GrokService:
             temperature=0
 
         )
+
+        usage = getattr(response, "usage", None)
+
+        self.last_usage = {
+
+            "prompt_tokens": getattr(usage, "prompt_tokens", 0) or 0,
+
+            "completion_tokens": getattr(usage, "completion_tokens", 0) or 0,
+
+            "total_tokens": getattr(usage, "total_tokens", 0) or 0
+
+        }
 
         print("Groq Success")
 

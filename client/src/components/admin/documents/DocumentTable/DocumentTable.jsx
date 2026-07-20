@@ -1,4 +1,4 @@
-import DocumentRow from "../DocumentRow";
+import DocumentRow from "../DocumentRow/DocumentRow";
 import EmptyDocuments from "../EmptyDocuments";
 
 import styles from "./DocumentTable.module.css";
@@ -9,7 +9,9 @@ export default function DocumentTable({
 
     loading = false,
 
-    onEdit,
+    onPreview,
+
+    onDownload,
 
     onDelete
 
@@ -65,13 +67,13 @@ export default function DocumentTable({
 
                         <th>Document</th>
 
-                        <th>Department</th>
-
                         <th>Type</th>
+
+                        <th>Size</th>
 
                         <th>Uploaded By</th>
 
-                        <th>Date</th>
+                        <th>Uploaded</th>
 
                         <th>Status</th>
 
@@ -93,7 +95,9 @@ export default function DocumentTable({
 
                                 document={document}
 
-                                onEdit={onEdit}
+                                onPreview={onPreview}
+
+                                onDownload={onDownload}
 
                                 onDelete={onDelete}
 

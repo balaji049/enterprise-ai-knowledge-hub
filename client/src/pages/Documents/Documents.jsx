@@ -4,7 +4,10 @@ import DashboardLayout from "../../components/dashboard/DashboardLayout";
 
 import DocumentsLayout from "../../components/documents/DocumentsLayout";
 import DocumentsHome from "../../components/documents/DocumentsHome";
+import DocumentStats from "../../../components/admin/documents/DocumentStats";
+import DocumentToolbar from "../../../components/admin/documents/DocumentToolbar";
 import * as documentService from "../../services/document.service";
+import * as statsService from "../../../services/documentStats.service";
 
 export default function Documents() {
 
@@ -34,6 +37,12 @@ export default function Documents() {
 
     const [category, setCategory] = useState("All");
 
+    const [status, setStatus] = useState("All");
+
+    const [fileType, setFileType] = useState("All");
+
+    const [sort, setSort] = useState("latest");
+
     /* ==========================================================
        DOCUMENT STATE
     ========================================================== */
@@ -41,6 +50,8 @@ export default function Documents() {
     const [documents, setDocuments] = useState([]);
 
     const [selectedDocument, setSelectedDocument] = useState(null);
+
+    const [stats, setStats] = useState(null);
 
     const [loading, setLoading] = useState(true);
 
@@ -69,9 +80,23 @@ export default function Documents() {
 
         try {
 
-            const data = await documentService.getDocuments();
+            const [
 
-            setDocuments(data);
+                documents,
+
+                statistics
+
+            ] = await Promise.all([
+
+                documentService.getDocuments(),
+
+                statsService.getDocumentStats()
+
+            ]);
+
+            setDocuments(documents);
+
+            setStats(statistics);
 
         } catch (error) {
 
@@ -91,39 +116,97 @@ export default function Documents() {
 
     const filteredDocuments = useMemo(() => {
 
-        return documents.filter(document => {
+        let data = [...documents];
 
-            const matchesSearch =
+        if (search) {
 
-                document.title
+            data = data.filter(document =>
 
-                    .toLowerCase()
+                (document.originalName || document.name)
 
-                    .includes(search.toLowerCase());
+                    ?.toLowerCase()
 
-            const matchesDepartment =
-
-                department === "All" ||
-
-                document.department?.name === department;
-
-            const matchesCategory =
-
-                category === "All" ||
-
-                document.category === category;
-
-            return (
-
-                matchesSearch &&
-
-                matchesDepartment &&
-
-                matchesCategory
+                    .includes(search.toLowerCase())
 
             );
 
-        });
+        }
+
+        if (status !== "All") {
+
+            data = data.filter(document =>
+
+                document.status === status
+
+            );
+
+        }
+
+        if (fileType !== "All") {
+
+            data = data.filter(document =>
+
+                document.mimeType
+
+                    ?.toLowerCase()
+
+                    .includes(fileType.toLowerCase())
+
+            );
+
+        }
+
+        switch (sort) {
+
+            case "name":
+
+                data.sort((a, b) =>
+
+                    a.originalName.localeCompare(
+
+                        b.originalName
+
+                    )
+
+                );
+
+                break;
+
+            case "size":
+
+                data.sort((a, b) =>
+
+                    b.fileSize - a.fileSize
+
+                );
+
+                break;
+
+            case "oldest":
+
+                data.sort((a, b) =>
+
+                    new Date(a.createdAt) -
+
+                    new Date(b.createdAt)
+
+                );
+
+                break;
+
+            default:
+
+                data.sort((a, b) =>
+
+                    new Date(b.createdAt) -
+
+                    new Date(a.createdAt)
+
+                );
+
+        }
+
+        return data;
 
     }, [
 
@@ -131,9 +214,11 @@ export default function Documents() {
 
         search,
 
-        department,
+        status,
 
-        category
+        fileType,
+
+        sort
 
     ]);
 
@@ -232,6 +317,34 @@ export default function Documents() {
         <DashboardLayout>
 
             <DocumentsLayout>
+
+                <DocumentStats
+
+                    stats={stats}
+
+                />
+
+                <DocumentToolbar
+
+                    search={search}
+
+                    status={status}
+
+                    fileType={fileType}
+
+                    sort={sort}
+
+                    onSearch={setSearch}
+
+                    onStatus={setStatus}
+
+                    onFileType={setFileType}
+
+                    onSort={setSort}
+
+                    onRefresh={loadDocuments}
+
+                />
 
                 <DocumentsHome
 

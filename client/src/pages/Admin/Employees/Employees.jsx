@@ -142,27 +142,11 @@ export default function Employees() {
 
     const handleAdd = () => {
 
-    setSelectedEmployee({
+        setSelectedEmployee(null);
 
-        employeeId: "",
+        setShowModal(true);
 
-        name: "",
-
-        email: "",
-
-        designation: "Software Engineer",
-
-        role: "employee",
-
-        status: "Active",
-
-        department: user.department._id
-
-    });
-
-    setShowModal(true);
-
-};
+    };
 
     const handleView = (employee) => {
 

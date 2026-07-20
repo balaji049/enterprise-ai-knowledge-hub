@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
-import * as dashboardService from "../../../services/dashboard.service";
-
+import * as dashboardService from "../../../services/adminDashboard.service";
 import PipelineStatus from "../../../components/admin/dashboard/PipelineStatus/PipelineStatus";
 
 
@@ -23,21 +22,21 @@ export default function Dashboard() {
 
     const loadDashboard = async () => {
 
-        try {
+    try {
 
-            const data = await dashboardService.getDashboard();
+        const data = await dashboardService.getDashboard();
 
-            setDashboard(data);
+        console.log(JSON.stringify(data, null, 2));
 
-        }
+        setDashboard(data);
 
-        catch (error) {
+    } catch (error) {
 
-            console.error(error);
+        console.error(error);
 
-        }
+    }
 
-    };
+};
 
     if (!dashboard) {
 

@@ -105,7 +105,7 @@ export default function EmployeesHome({
 
         >
 
-            {/* Header */}
+            {/* Header 
 
             <motion.div
 
@@ -131,7 +131,7 @@ export default function EmployeesHome({
 
                 </div>
 
-            </motion.div>
+            </motion.div>  */}
 
             {/* Department banner */}
 

@@ -83,20 +83,17 @@ export const getMessages = asyncHandler(
         );
 
         successResponse(
-
-            res,
-
-            "Messages fetched",
-
-            messages.map(message => ({
-
-                role: message.role,
-
-                content: message.content
-
-            }))
-
-        );
+    res,
+    "Messages fetched",
+    messages.map(message => ({
+        _id: message._id,
+        role: message.role,
+        content: message.content,
+        sources: message.sources,
+        responseTime: message.responseTime,
+        createdAt: message.createdAt
+    }))
+);
 
     }
 

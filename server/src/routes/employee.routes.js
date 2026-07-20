@@ -65,17 +65,12 @@ router.put(
 );
 
 router.delete(
-
     "/:id",
-
     authorize(
-
+        ROLES.ADMIN,
         ROLES.SUPER_ADMIN
-
     ),
-
     employeeController.deleteEmployee
-
 );
 
 export default router;

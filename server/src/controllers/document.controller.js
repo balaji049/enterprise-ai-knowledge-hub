@@ -1,4 +1,8 @@
 import asyncHandler from "../middleware/asyncHandler.js";
+import analyticsEvents from "../analytics/analytics.events.js";
+import { ANALYTICS_EVENT_TYPES } from "../analytics/analytics.constants.js";
+import ApiError from "../utils/ApiError.js";
+import path from "path";
 
 import * as documentService from "../services/document.service.js";
 
@@ -7,6 +11,19 @@ import {
     successResponse
 
 } from "../utils/apiResponse.js";
+
+const buildFileUrl = (req, filePath) => {
+
+    if (!filePath) return null;
+
+    const relativePath = path
+        .normalize(filePath)
+        .replace(/^src[\\/]/, "")
+        .replace(/\\/g, "/");
+
+    return `${req.protocol}://${req.get("host")}/${relativePath}`;
+
+};
 
 export const getDocuments = asyncHandler(
 
@@ -42,29 +59,45 @@ export const uploadDocument = asyncHandler(
 
         const document = await documentService.uploadAndIndexDocument(
 
-            {
+    {
 
-                name: req.body.name,
+        name: req.body.name,
 
-                originalName: file.originalname,
+        originalName: file.originalname,
 
-                department: req.user.department._id,
+        department: req.user.department._id,
 
-                uploadedBy: req.user._id,
+        uploadedBy: req.user._id,
 
-                fileName: file.filename,
+        fileName: file.filename,
 
-                filePath: file.path,
+        filePath: file.path,
 
-                mimeType: file.mimetype,
+        mimeType: file.mimetype,
 
-                fileSize: file.size
+        fileSize: file.size
 
-            },
+    },
 
-            req.user.department
+    req.user.department,
 
-        );
+    req.user
+
+);
+
+        await analyticsEvents.log({
+
+            employee: req.user._id,
+
+            department: req.user.department._id,
+
+            type: ANALYTICS_EVENT_TYPES.DOCUMENT_UPLOAD,
+
+            resourceId: document._id,
+
+            resourceType: "Document"
+
+        });
 
         successResponse(
 
@@ -82,15 +115,133 @@ export const uploadDocument = asyncHandler(
 
 );
 
+export const getDocument = asyncHandler(
+
+    async (req, res) => {
+
+        const document = await documentService.getDocument(
+
+            req.params.id,
+
+            req.user.department._id
+
+        );
+
+        if (!document) {
+
+            throw new ApiError(
+
+                404,
+
+                "Document not found"
+
+            );
+
+        }
+
+        await analyticsEvents.log({
+
+            employee: req.user._id,
+
+            department: req.user.department._id,
+
+            type: ANALYTICS_EVENT_TYPES.DOCUMENT_VIEW,
+
+            resourceId: document._id,
+
+            resourceType: "Document"
+
+        });
+
+        const payload = document.toObject();
+
+        payload.fileUrl = buildFileUrl(req, payload.filePath);
+
+        delete payload.filePath;
+
+        successResponse(
+
+            res,
+
+            "Document fetched successfully",
+
+            payload
+
+        );
+
+    }
+
+);
+
+export const downloadDocument = asyncHandler(
+
+    async (req, res) => {
+
+        const document = await documentService.getDocument(
+
+            req.params.id,
+
+            req.user.department._id
+
+        );
+
+        if (!document) {
+
+            throw new ApiError(
+
+                404,
+
+                "Document not found"
+
+            );
+
+        }
+
+        await analyticsEvents.log({
+
+            employee: req.user._id,
+
+            department: req.user.department._id,
+
+            type: ANALYTICS_EVENT_TYPES.DOCUMENT_DOWNLOAD,
+
+            resourceId: document._id,
+
+            resourceType: "Document"
+
+        });
+
+        return res.download(document.filePath, document.originalName);
+
+    }
+
+);
+
 export const deleteDocument = asyncHandler(
 
     async (req, res) => {
 
         await documentService.deleteDocument(
 
-            req.params.id
+    req.params.id,
 
-        );
+    req.user
+
+);
+
+        await analyticsEvents.log({
+
+            employee: req.user._id,
+
+            department: req.user.department._id,
+
+            type: ANALYTICS_EVENT_TYPES.DOCUMENT_DELETE,
+
+            resourceId: req.params.id,
+
+            resourceType: "Document"
+
+        });
 
         successResponse(
 
@@ -106,29 +257,23 @@ export const deleteDocument = asyncHandler(
 
 export const getDocumentStats = asyncHandler(
 
-    async (
+    async (req, res) => {
 
-        req,
+        const stats = await documentService.getDocumentStats(
 
-        res
+            req.user.department._id
 
-    ) => {
+        );
 
-        const stats =
+        successResponse(
 
-            await documentService.getDocumentStats(
+            res,
 
-                req.user.department._id
+            "Document statistics fetched.",
 
-            );
+            stats
 
-        return res.status(200).json({
-
-            success: true,
-
-            data: stats
-
-        });
+        );
 
     }
 

@@ -1,35 +1,17 @@
 import {
     Search,
-    Building2,
     Shield,
     Plus
 } from "lucide-react";
 
 import styles from "./EmployeeToolbar.module.css";
-
-const departments = [
-
-    "All",
-
-    "Information Technology",
-
-    "Human Resources",
-
-    "Finance",
-
-    "Administration"
-
-];
-
 const roles = [
 
     "All",
 
-    "Admin",
+    "admin",
 
-    "Manager",
-
-    "Employee"
+    "employee"
 
 ];
 
@@ -37,13 +19,9 @@ export default function EmployeeToolbar({
 
     search,
 
-    department,
-
     role,
 
     onSearch,
-
-    onDepartmentChange,
 
     onRoleChange,
 
@@ -69,63 +47,13 @@ export default function EmployeeToolbar({
 
                     value={search}
 
-                    onChange={(event)=>
+                    onChange={(event) =>
 
-                        onSearch(
-
-                            event.target.value
-
-                        )
+                        onSearch(event.target.value)
 
                     }
 
                 />
-
-            </div>
-
-            {/* Department */}
-
-            <div className={styles.selectBox}>
-
-                <Building2 size={18} />
-
-                <select
-
-                    value={department}
-
-                    onChange={(event)=>
-
-                        onDepartmentChange(
-
-                            event.target.value
-
-                        )
-
-                    }
-
-                >
-
-                    {
-
-                        departments.map(item=>(
-
-                            <option
-
-                                key={item}
-
-                                value={item}
-
-                            >
-
-                                {item}
-
-                            </option>
-
-                        ))
-
-                    }
-
-                </select>
 
             </div>
 
@@ -139,13 +67,9 @@ export default function EmployeeToolbar({
 
                     value={role}
 
-                    onChange={(event)=>
+                    onChange={(event) =>
 
-                        onRoleChange(
-
-                            event.target.value
-
-                        )
+                        onRoleChange(event.target.value)
 
                     }
 
@@ -153,17 +77,17 @@ export default function EmployeeToolbar({
 
                     {
 
-                        roles.map(item=>(
+                        roles.map(role => (
 
                             <option
 
-                                key={item}
+                                key={role}
 
-                                value={item}
+                                value={role}
 
                             >
 
-                                {item}
+                                {role}
 
                             </option>
 

@@ -14,10 +14,12 @@ export default function ChatMessages({ messages, loading }) {
 
     return (
         <div className={styles.container}>
-            {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
-            ))}
-
+            {messages.map((message, index) => (
+    <ChatMessage
+        key={message._id ?? message.id ?? index}
+        message={message}
+    />
+))}
             {loading && <TypingIndicator />}
 
             <div ref={bottomRef} />

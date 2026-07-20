@@ -1,7 +1,6 @@
 import {
     Eye,
     Download,
-    Pencil,
     Trash2,
     FileText
 } from "lucide-react";
@@ -16,15 +15,33 @@ export default function DocumentRow({
 
     onDownload,
 
-    onEdit,
-
     onDelete
 
 }) {
 
-    const department = document.department?.name || "—";
-
     const uploadedBy = document.uploadedBy?.fullName || "—";
+
+    const formatFileSize = bytes => {
+
+        if (!bytes) return "--";
+
+        const units = ["B", "KB", "MB", "GB"];
+
+        let size = bytes;
+
+        let unit = 0;
+
+        while (size >= 1024 && unit < units.length - 1) {
+
+            size /= 1024;
+
+            unit++;
+
+        }
+
+        return `${size.toFixed(1)} ${units[unit]}`;
+
+    };
 
     const type =
 
@@ -42,7 +59,21 @@ export default function DocumentRow({
 
         document.createdAt
 
-    ).toLocaleDateString();
+    ).toLocaleDateString(
+
+        "en-IN",
+
+        {
+
+            day: "2-digit",
+
+            month: "short",
+
+            year: "numeric"
+
+        }
+
+    );
 
     return (
 
@@ -70,11 +101,11 @@ export default function DocumentRow({
 
             </td>
 
-            {/* Department */}
+            {/* Size */}
 
             <td>
 
-                {department}
+                {formatFileSize(document.fileSize)}
 
             </td>
 
@@ -167,26 +198,6 @@ export default function DocumentRow({
                     >
 
                         <Download size={16} />
-
-                    </button>
-
-                    <button
-
-                        title="Edit"
-
-                        onClick={() =>
-
-                            onEdit?.(
-
-                                document
-
-                            )
-
-                        }
-
-                    >
-
-                        <Pencil size={16} />
 
                     </button>
 

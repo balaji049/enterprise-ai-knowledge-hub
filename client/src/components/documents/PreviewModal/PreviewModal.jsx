@@ -1,16 +1,41 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import {
     X,
     FileText,
     Download,
+    Circle,
     Calendar,
     User,
-    Building2,
-    Tag
+    Building2
 } from "lucide-react";
 
 import styles from "./PreviewModal.module.css";
+
+const formatFileSize = bytes => {
+    if (!bytes) return "--";
+
+    const units = ["B", "KB", "MB", "GB"];
+    let size = bytes;
+    let unit = 0;
+
+    while (size >= 1024 && unit < units.length - 1) {
+        size /= 1024;
+        unit++;
+    }
+
+    return `${size.toFixed(1)} ${units[unit]}`;
+};
+
+const formatDate = date => {
+    if (!date) return "--";
+
+    return new Date(date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+};
 
 export default function PreviewModal({
 
@@ -23,6 +48,19 @@ export default function PreviewModal({
 }) {
 
     if (!document) return null;
+
+    const previewUrl = document.fileUrl;
+
+    const fileType = document.fileType || "FILE";
+
+    const isPdf = fileType === "PDF";
+
+    const statusClass =
+        document.status === "Indexed"
+            ? styles.indexed
+            : document.status === "Processing"
+            ? styles.processing
+            : styles.failed;
 
     return (
 
@@ -47,36 +85,25 @@ export default function PreviewModal({
                     className={styles.modal}
 
                     initial={{
-
-                        scale: .9,
-
+                        scale: .96,
                         opacity: 0
-
                     }}
 
                     animate={{
-
                         scale: 1,
-
                         opacity: 1
-
                     }}
 
                     exit={{
-
-                        scale: .95,
-
+                        scale: .96,
                         opacity: 0
-
                     }}
 
                     transition={{
-
-                        duration: .25
-
+                        duration: .22
                     }}
 
-                    onClick={(e)=>e.stopPropagation()}
+                    onClick={e => e.stopPropagation()}
 
                 >
 
@@ -84,7 +111,7 @@ export default function PreviewModal({
 
                     <div className={styles.header}>
 
-                        <div className={styles.title}>
+                        <div className={styles.titleBlock}>
 
                             <FileText size={24}/>
 
@@ -98,7 +125,7 @@ export default function PreviewModal({
 
                                 <span>
 
-                                    {document.fileType}
+                                    {fileType}
 
                                 </span>
 
@@ -108,41 +135,93 @@ export default function PreviewModal({
 
                         <button
 
+                            type="button"
+
+                            className={styles.closeButton}
+
                             onClick={onClose}
 
                         >
 
-                            <X size={22}/>
+                            <X size={20}/>
 
                         </button>
 
                     </div>
 
-                    {/* Preview */}
+                    {/* Meta */}
 
-                    <div className={styles.preview}>
+                    <div className={styles.metaRow}>
 
-                        <div className={styles.placeholder}>
+                        <div>
 
-                            <FileText size={80}/>
+                            <span className={styles.metaLabel}>
 
-                            <h3>
+                                File Size
 
-                                Preview Coming Soon
+                            </span>
 
-                            </h3>
+                            <strong>
 
-                            <p>
+                                {formatFileSize(document.size)}
 
-                                PDF, DOCX, PPT and Excel preview will be enabled after backend integration.
+                            </strong>
 
-                            </p>
+                        </div>
+
+                        <div>
+
+                            <span className={styles.metaLabel}>
+
+                                Uploaded By
+
+                            </span>
+
+                            <strong>
+
+                                {document.uploadedBy}
+
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span className={styles.metaLabel}>
+
+                                Uploaded
+
+                            </span>
+
+                            <strong>
+
+                                {formatDate(document.createdAt)}
+
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span className={styles.metaLabel}>
+
+                                Status
+
+                            </span>
+
+                            <strong className={statusClass}>
+
+                                <Circle size={10}/>
+
+                                {document.status}
+
+                            </strong>
 
                         </div>
 
                     </div>
 
-                    {/* Metadata */}
+                    {/* Information */}
 
                     <div className={styles.infoGrid}>
 
@@ -153,18 +232,6 @@ export default function PreviewModal({
                             <span>
 
                                 {document.department}
-
-                            </span>
-
-                        </div>
-
-                        <div>
-
-                            <Tag size={16}/>
-
-                            <span>
-
-                                {document.category}
 
                             </span>
 
@@ -188,11 +255,53 @@ export default function PreviewModal({
 
                             <span>
 
-                                {document.uploadedAt}
+                                {formatDate(document.createdAt)}
 
                             </span>
 
                         </div>
+
+                    </div>
+
+                    {/* Preview */}
+
+                    <div className={styles.previewArea}>
+
+                        {
+
+                            isPdf && previewUrl
+
+                                ?
+
+                                <iframe
+
+                                    src={previewUrl}
+
+                                    title={document.title}
+
+                                />
+
+                                :
+
+                                <div className={styles.placeholder}>
+
+                                    <FileText size={72}/>
+
+                                    <h3>
+
+                                        Preview not available
+
+                                    </h3>
+
+                                    <p>
+
+                                        Download this document to view it locally.
+
+                                    </p>
+
+                                </div>
+
+                        }
 
                     </div>
 
@@ -202,19 +311,31 @@ export default function PreviewModal({
 
                         <button
 
-                            className={styles.download}
+                            type="button"
 
-                            onClick={()=>
+                            className={styles.downloadButton}
 
-                                onDownload?.(document)
-
-                            }
+                            onClick={() => onDownload?.(document)}
 
                         >
 
                             <Download size={18}/>
 
                             Download
+
+                        </button>
+
+                        <button
+
+                            type="button"
+
+                            className={styles.closeFooterButton}
+
+                            onClick={onClose}
+
+                        >
+
+                            Close
 
                         </button>
 

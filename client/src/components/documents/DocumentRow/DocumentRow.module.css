@@ -112,27 +112,27 @@
 
 }
 
-.approved{
+.indexed{
 
     background:#DCFCE7;
 
-    color:#166534;
+    color:#15803D;
 
 }
 
-.pending{
+.processing{
 
     background:#FEF3C7;
 
-    color:#92400E;
+    color:#B45309;
 
 }
 
-.rejected{
+.failed{
 
     background:#FEE2E2;
 
-    color:#991B1B;
+    color:#DC2626;
 
 }
 

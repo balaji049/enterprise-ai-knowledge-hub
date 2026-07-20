@@ -11,10 +11,12 @@ import {
 export const getDashboard = asyncHandler(
 
     async (req, res) => {
+    console.log("Dashboard Controller Called");
+    console.log("User Role:", req.user.role);
+
 
         const dashboard =
-
-            await dashboardService.getDashboard();
+    await dashboardService.getDashboard(req.user);
 
         successResponse(
 

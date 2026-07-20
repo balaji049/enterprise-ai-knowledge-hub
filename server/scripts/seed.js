@@ -1,165 +1,69 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
-import connectDB from "../src/config/mongodb.js";
-
-import User from "../src/models/User.js";
-import Employee from "../src/models/Employee.js";
-import Department from "../src/models/Department.js";
+import { seedDepartments } from "./departments.seed.js";
+import { seedUsers } from "./users.seed.js";
 
 dotenv.config();
 
-await connectDB();
+const connectDB = async () => {
+    try {
 
-try {
+        await mongoose.connect(process.env.MONGO_URI);
 
-    await Employee.deleteMany();
+        console.log("✅ MongoDB Connected");
 
-    await User.deleteMany();
+    } catch (error) {
 
-    let department = await Department.findOne({
+        console.error("❌ MongoDB Connection Failed");
+        console.error(error);
 
-        code: "IT"
-
-    });
-
-    if (!department) {
-
-        department = await Department.create({
-
-            name: "Information Technology",
-
-            code: "IT",
-
-            description: "IT Department"
-
-        });
-
+        process.exit(1);
     }
+};
 
-    /* ======================================================
-       Passwords
-    ====================================================== */
+const seedDatabase = async () => {
 
-    const adminPassword = await bcrypt.hash(
+    try {
 
-        "Admin@123",
+        console.log("\n====================================");
+        console.log(" Enterprise AI Knowledge Hub Seeder ");
+        console.log("====================================\n");
 
-        10
+        await connectDB();
 
-    );
+        const departmentMap = await seedDepartments();
 
-    const employeePassword = await bcrypt.hash(
+        await seedUsers(departmentMap);
 
-        "Employee@123",
+        console.log("\n====================================");
+        console.log("✅ Database Seeded Successfully");
+        console.log("====================================");
 
-        10
+        console.log(`
+Departments  : 8
+Super Admin  : 1
+Admins       : 8
+Employees    : 8
+Total Users  : 17
+        `);
 
-    );
+        await mongoose.connection.close();
 
-    /* ======================================================
-       IT ADMIN
-    ====================================================== */
+        console.log("🔌 MongoDB Connection Closed");
 
-    const adminUser = await User.create({
+        process.exit(0);
 
-        employeeId: "ITA001",
+    } catch (error) {
 
-        fullName: "IT Admin",
+        console.error("\n❌ Seeding Failed\n");
 
-        email: "itadmin@company.com",
+        console.error(error);
 
-        password: adminPassword,
+        await mongoose.connection.close();
 
-        role: "admin",
+        process.exit(1);
+    }
+};
 
-        department: department._id,
-
-        isActive: true
-
-    });
-
-    await Employee.create({
-
-        user: adminUser._id,
-
-        employeeId: "ITA001",
-
-        department: department._id,
-
-        designation: "Department Administrator",
-
-        joiningDate: new Date(),
-
-        employmentType: "Full Time",
-
-        status: "Active"
-
-    });
-
-    /* ======================================================
-       IT EMPLOYEE
-    ====================================================== */
-
-    const employeeUser = await User.create({
-
-        employeeId: "ITE001",
-
-        fullName: "IT Employee",
-
-        email: "itemployee@company.com",
-
-        password: employeePassword,
-
-        role: "employee",
-
-        department: department._id,
-
-        isActive: true
-
-    });
-
-    await Employee.create({
-
-        user: employeeUser._id,
-
-        employeeId: "ITE001",
-
-        department: department._id,
-
-        designation: "Software Engineer",
-
-        joiningDate: new Date(),
-
-        employmentType: "Full Time",
-
-        status: "Active"
-
-    });
-
-    console.log("\n================================");
-    console.log("Department Seed Completed");
-    console.log("================================");
-
-    console.log("\nADMIN LOGIN");
-    console.log("----------------------------");
-    console.log("Employee ID : ITA001");
-    console.log("Password    : Admin@123");
-
-    console.log("\nEMPLOYEE LOGIN");
-    console.log("----------------------------");
-    console.log("Employee ID : ITE001");
-    console.log("Password    : Employee@123");
-
-    console.log("\nDepartment  : Information Technology");
-    console.log("================================\n");
-
-}
-catch (error) {
-
-    console.error(error);
-
-}
-
-mongoose.connection.close();
+seedDatabase();

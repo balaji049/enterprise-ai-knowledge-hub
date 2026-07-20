@@ -78,6 +78,7 @@ router.delete(
 
     authorize(
 
+        ROLES.ADMIN,
         ROLES.SUPER_ADMIN
 
     ),

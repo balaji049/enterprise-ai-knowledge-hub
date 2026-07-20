@@ -1,6 +1,10 @@
 import {
 
-    FileText,
+    CheckCircle2,
+
+    Loader2,
+
+    XCircle,
 
     RotateCcw,
 
@@ -10,161 +14,147 @@ import {
 
 import styles from "./PipelineRow.module.css";
 
+const StatusIcon = ({ value }) => {
+
+    if (value)
+
+        return (
+
+            <CheckCircle2
+
+                size={18}
+
+                className={styles.success}
+
+            />
+
+        );
+
+    return (
+
+        <Loader2
+
+            size={18}
+
+            className={styles.pending}
+
+        />
+
+    );
+
+};
+
 export default function PipelineRow({
 
-    item,
-
-    onView,
-
-    onReindex
+    document
 
 }) {
+
+    const processing =
+
+        document.processing || {};
+
+    const indexedAt =
+
+        document.lastIndexedAt
+
+            ? new Date(
+
+                document.lastIndexedAt
+
+            ).toLocaleDateString(
+
+                "en-IN"
+
+            )
+
+            : "--";
 
     return (
 
         <tr>
 
-            {/* Document */}
-
             <td>
 
-                <div className={styles.document}>
-
-                    <div className={styles.icon}>
-
-                        <FileText size={18} />
-
-                    </div>
-
-                    <span>
-
-                        {item.document}
-
-                    </span>
-
-                </div>
+                {document.name}
 
             </td>
 
-            {/* Department */}
-
             <td>
 
-                {item.department}
+                {document.uploadedBy?.fullName || "--"}
 
             </td>
 
-            {/* Chunks */}
-
             <td>
 
-                {item.chunks}
+                {document.chunkCount}
 
             </td>
 
-            {/* Embedding */}
-
             <td>
 
-                <span
+                <StatusIcon
 
-                    className={`${styles.badge} ${
-                        item.embedding === "Completed"
+                    value={processing.textExtracted}
 
-                            ? styles.success
-
-                            : styles.processing
-                    }`}
-
-                >
-
-                    {item.embedding}
-
-                </span>
+                />
 
             </td>
 
-            {/* Vector DB */}
+            <td>
+
+                <StatusIcon
+
+                    value={processing.embedded}
+
+                />
+
+            </td>
+
+            <td>
+
+                <StatusIcon
+
+                    value={processing.indexed}
+
+                />
+
+            </td>
 
             <td>
 
                 <span
 
-                    className={`${styles.badge} ${
-                        item.vectorStatus === "Indexed"
-
-                            ? styles.success
-
-                            : styles.processing
-                    }`}
+                    className={`${styles.badge} ${styles[document.status.toLowerCase()]}`}
 
                 >
 
-                    {item.vectorStatus}
+                    {document.status}
 
                 </span>
 
             </td>
-
-            {/* Pipeline Status */}
 
             <td>
 
-                <span
-
-                    className={`${styles.badge} ${
-                        item.status === "Ready"
-
-                            ? styles.success
-
-                            : styles.processing
-                    }`}
-
-                >
-
-                    {item.status}
-
-                </span>
+                {indexedAt}
 
             </td>
-
-            {/* Actions */}
 
             <td>
 
                 <div className={styles.actions}>
 
-                    <button
+                    <button>
 
-                        title="View"
-
-                        onClick={()=>
-
-                            onView?.(item)
-
-                        }
-
-                    >
-
-                        <Eye size={16}/>
+                        <Eye size={16} />
 
                     </button>
 
-                    <button
+                    <button>
 
-                        title="Re-index"
-
-                        className={styles.primary}
-
-                        onClick={()=>
-
-                            onReindex?.(item)
-
-                        }
-
-                    >
-
-                        <RotateCcw size={16}/>
+                        <RotateCcw size={16} />
 
                     </button>
 

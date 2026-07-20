@@ -1,11 +1,28 @@
+import analyticsEvents from "../analytics/analytics.events.js";
+import { ANALYTICS_EVENT_TYPES } from "../analytics/analytics.constants.js";
 import Document from "../models/Document.js";
 import * as pythonService from "./python.service.js";
+import { logActivity } from "./activityLogger.service.js";
+
+const buildFileUrl = filePath => {
+
+    if (!filePath) return null;
+
+    const relativePath = filePath
+        .replace(/^src[\\/]/, "")
+        .replace(/\\/g, "/");
+
+    return `http://localhost:5000/${relativePath}`;
+
+};
 
 export const uploadAndIndexDocument = async (
 
     data,
 
-    department
+    department,
+
+    user
 
 ) => {
 
@@ -14,6 +31,20 @@ export const uploadAndIndexDocument = async (
         ...data,
 
         status: "Processing"
+
+    });
+
+    await analyticsEvents.log({
+
+        employee: user._id,
+
+        department: user.department,
+
+        type: ANALYTICS_EVENT_TYPES.DOCUMENT_UPLOAD,
+
+        resourceId: document._id,
+
+        resourceType: "Document"
 
     });
 
@@ -60,18 +91,40 @@ export const uploadAndIndexDocument = async (
         document.status = "Failed";
 
         await document.save();
+
     }
+
+    await logActivity({
+
+        module: "Documents",
+
+        action: "Upload",
+
+        target: document.name,
+
+        details: `Document "${document.originalName}" uploaded successfully`,
+
+        performedBy: user._id,
+
+        department: user.department._id,
+
+        status: document.status === "Failed"
+            ? "Failed"
+            : "Success"
+
+    });
 
     return await Document.findById(document._id)
 
         .populate("department")
 
         .populate("uploadedBy", "fullName");
+
 };
 
 export const getDocuments = async (departmentId) => {
 
-    return await Document
+    const documents = await Document
 
         .find({
 
@@ -93,15 +146,53 @@ export const getDocuments = async (departmentId) => {
 
         );
 
+    return documents.map(document => {
+
+        const payload = document.toObject();
+
+        payload.fileUrl = buildFileUrl(payload.filePath);
+
+        return payload;
+
+    });
+
 };
 
-export const getDocument = async (id) => {
+export const getDocument = async (
 
-    return await Document
+    id,
 
-        .findById(id)
+    departmentId
 
-        .populate("department")
+) => {
+
+    const query = departmentId
+
+        ? Document.findOne({
+
+            _id: id,
+
+            department: departmentId
+
+        })
+
+        : Document.findById(id);
+
+    return await query
+
+        .select(
+
+            "_id name fileName filePath fileSize mimeType status uploadedBy createdAt department"
+
+        )
+
+        .populate(
+
+            "department",
+
+            "name"
+
+        )
 
         .populate(
 
@@ -145,91 +236,79 @@ export const updateDocument = async (
 
 };
 
-export const deleteDocument = async (id) => {
+export const deleteDocument = async (
 
-    return await Document.findByIdAndDelete(id);
+    id,
 
-};
-
-export const getDocumentStats = async (
-
-    departmentId
+    user
 
 ) => {
 
-    const [
+    const document = await Document.findByIdAndDelete(id);
 
-        total,
+    if (!document) {
 
-        indexed,
+        return null;
 
-        processing,
+    }
 
-        failed,
+    await logActivity({
 
-        documents
+        module: "Documents",
 
-    ] = await Promise.all([
+        action: "Delete",
 
-        Document.countDocuments({
+        target: document.name,
 
-            department: departmentId
+        details: `Document "${document.originalName}" deleted`,
 
-        }),
+        performedBy: user._id,
 
-        Document.countDocuments({
+        department: user.department._id,
 
-            department: departmentId,
+        status: "Success"
 
-            status: "Indexed"
+    });
 
-        }),
+    return document;
 
-        Document.countDocuments({
+};
 
-            department: departmentId,
+export const getDocumentStats = async (departmentId) => {
 
-            status: "Processing"
+    const documents = await Document.find({
 
-        }),
+        department: departmentId
 
-        Document.countDocuments({
+    });
 
-            department: departmentId,
+    const total = documents.length;
 
-            status: "Failed"
+    const indexed = documents.filter(
 
-        }),
+        document => document.status === "Indexed"
 
-        Document.find({
+    ).length;
 
-            department: departmentId
+    const processing = documents.filter(
 
-        })
+        document => document.status === "Processing"
 
-        .select("fileSize")
+    ).length;
 
-    ]);
+    const failed = documents.filter(
 
-    const storage =
+        document => document.status === "Failed"
 
-        documents.reduce(
+    ).length;
 
-            (
+    const storage = documents.reduce(
 
-                sum,
+        (total, document) => total + (document.fileSize || 0),
 
-                doc
+        0
 
-            ) =>
-
-                sum +
-
-                (doc.fileSize || 0),
-
-            0
-
-        );
+    );
 
     return {
 

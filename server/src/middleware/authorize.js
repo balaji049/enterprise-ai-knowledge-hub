@@ -10,6 +10,9 @@ const authorize = (...roles) => {
 
     ) => {
 
+        console.log("Allowed Roles:", roles);
+        console.log("User Role:", req.user?.role);
+
         if (
 
             !roles.includes(req.user.role)

@@ -2,7 +2,7 @@ import {
 
     Search,
 
-    Building2,
+    RefreshCw,
 
     Upload
 
@@ -10,29 +10,21 @@ import {
 
 import styles from "./DocumentToolbar.module.css";
 
-const departments = [
-
-    "All",
-
-    "Information Technology",
-
-    "Human Resources",
-
-    "Finance",
-
-    "Administration"
-
-];
-
 export default function DocumentToolbar({
 
     search,
 
-    department,
+    status,
+
+    fileType,
 
     onSearch,
 
-    onDepartmentChange,
+    onStatusChange,
+
+    onFileTypeChange,
+
+    onRefresh,
 
     onUpload
 
@@ -42,21 +34,17 @@ export default function DocumentToolbar({
 
         <div className={styles.toolbar}>
 
-            {/* Search */}
+            <div className={styles.search}>
 
-            <div className={styles.searchBox}>
-
-                <Search size={18} />
+                <Search size={18}/>
 
                 <input
-
-                    type="text"
 
                     placeholder="Search documents..."
 
                     value={search}
 
-                    onChange={(event)=>
+                    onChange={event =>
 
                         onSearch(
 
@@ -70,63 +58,83 @@ export default function DocumentToolbar({
 
             </div>
 
-            {/* Department */}
+            <select
 
-            <div className={styles.selectBox}>
+                value={status}
 
-                <Building2 size={18} />
+                onChange={event =>
 
-                <select
+                    onStatusChange(
 
-                    value={department}
+                        event.target.value
 
-                    onChange={(event)=>
+                    )
 
-                        onDepartmentChange(
+                }
 
-                            event.target.value
+            >
 
-                        )
+                <option>All</option>
 
-                    }
+                <option>Indexed</option>
 
-                >
+                <option>Processing</option>
 
-                    {
+                <option>Failed</option>
 
-                        departments.map(item=>(
+            </select>
 
-                            <option
+            <select
 
-                                key={item}
+                value={fileType}
 
-                                value={item}
+                onChange={event =>
 
-                            >
+                    onFileTypeChange(
 
-                                {item}
+                        event.target.value
 
-                            </option>
+                    )
 
-                        ))
+                }
 
-                    }
+            >
 
-                </select>
+                <option>All</option>
 
-            </div>
+                <option>PDF</option>
 
-            {/* Upload */}
+                <option>DOCX</option>
+
+                <option>TXT</option>
+
+                <option>MD</option>
+
+            </select>
 
             <button
 
-                className={styles.uploadButton}
+                className={styles.refresh}
+
+                onClick={onRefresh}
+
+            >
+
+                <RefreshCw size={16}/>
+
+                Refresh
+
+            </button>
+
+            <button
+
+                className={styles.upload}
 
                 onClick={onUpload}
 
             >
 
-                <Upload size={18} />
+                <Upload size={18}/>
 
                 Upload Document
 

@@ -8,6 +8,22 @@ export const getDocuments = async () => {
 
 };
 
+export const getDocumentStats = async () => {
+
+    const response = await api.getDocumentStats();
+
+    return response.data.data;
+
+};
+
+export const getDocument = async id => {
+
+    const response = await api.getDocument(id);
+
+    return response.data.data;
+
+};
+
 export const uploadDocument = async document => {
 
     const formData = new FormData();

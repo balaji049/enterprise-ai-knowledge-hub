@@ -1,184 +1,115 @@
 import { motion } from "framer-motion";
 
-import PipelineStats from "../PipelineStats";
-import PipelineToolbar from "../PipelineToolbar";
+import PipelineOverview from "../PipelineOverview";
+import PipelineFilters from "../PipelineFilters";
 import PipelineTable from "../PipelineTable";
-import EmptyPipeline from "../EmptyPipeline";
+import PipelineStatus from "../PipelineStatus";
+import PipelineTimeline from "../PipelineTimeline";
 
 import styles from "./PipelineHome.module.css";
 
-const container = {
-
-    hidden: {},
-
-    show: {
-
-        transition: {
-
-            staggerChildren: .08
-
-        }
-
-    }
-
-};
-
-const item = {
-
-    hidden: {
-
-        opacity: 0,
-
-        y: 20
-
-    },
-
-    show: {
-
-        opacity: 1,
-
-        y: 0,
-
-        transition: {
-
-            duration: .4
-
-        }
-
-    }
-
-};
-
 export default function PipelineHome({
 
-    pipeline,
+    data,
 
     loading,
 
-    search,
-
-    department,
-
-    onSearch,
-
-    onDepartmentChange,
-
     onRefresh,
 
-    onReindex,
-    onReindexAll
+    search,
+
+    status,
+
+    setSearch,
+
+    setStatus
 
 }) {
+
+    if (loading) {
+    return <h2>Loading...</h2>;
+}
+
+if (!data) {
+    return (
+        <div className={styles.container}>
+            <h2>Unable to load pipeline data.</h2>
+            <button
+                onClick={onRefresh}
+                className={styles.refresh}
+            >
+                Retry
+            </button>
+        </div>
+    );
+}
 
     return (
 
         <motion.div
 
-            variants={container}
-
-            initial="hidden"
-
-            animate="show"
-
             className={styles.container}
+
+            initial={{ opacity: 0 }}
+
+            animate={{ opacity: 1 }}
 
         >
 
-            {/* Header */}
-
-            <motion.div
-
-                variants={item}
-
-                className={styles.header}
-
-            >
+            <div className={styles.header}>
 
                 <div>
 
-                    <h1>
-
-                        Knowledge Pipeline
-
-                    </h1>
+                    <h1>Pipeline</h1>
 
                     <p>
 
-                        Monitor document indexing and embedding status.
+                        Monitor document ingestion and AI indexing
 
                     </p>
 
                 </div>
 
-            </motion.div>
+                <button
 
-            {/* Stats */}
+                    onClick={onRefresh}
 
-            <motion.div variants={item}>
+                    className={styles.refresh}
 
-                <PipelineStats
+                >
 
-                    pipeline={pipeline}
+                    Refresh
 
-                />
+                </button>
 
-            </motion.div>
+            </div>
 
-            {/* Toolbar */}
+            <PipelineOverview
 
-            <motion.div variants={item}>
+                summary={data.summary}
 
-                <PipelineToolbar
+            />
 
-                    search={search}
-
-                    department={department}
-
-                    onSearch={onSearch}
-
-                    onDepartmentChange={onDepartmentChange}
-
-                    onRefresh={onRefresh}
-
-                    onReindexAll={onReindexAll}
-
-                />
-
-            </motion.div>
-
-            {/* Table */}
-
-            <motion.div variants={item}>
-
-                {
-
-                    pipeline.length > 0
-
-                        ?
-
-                        <PipelineTable
-
-                            pipeline={pipeline}
-
-                            loading={loading}
-
-                            onView={(item)=>console.log(item)}
-
-                            onReindex={onReindex}
-
-                        />
-
-                        :
-
-                        <EmptyPipeline
-
-    onRefresh={onRefresh}
-
+            <PipelineFilters
+    search={search}
+    status={status}
+    onSearchChange={setSearch}
+    onStatusChange={setStatus}
 />
 
-                }
+            <PipelineTable
 
-            </motion.div>
+                documents={data.documents}
+
+            />
+
+            <div className={styles.bottom}>
+
+                <PipelineStatus />
+
+                <PipelineTimeline />
+
+            </div>
 
         </motion.div>
 

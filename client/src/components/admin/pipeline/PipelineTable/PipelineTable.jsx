@@ -1,56 +1,12 @@
 import PipelineRow from "../PipelineRow";
-import EmptyPipeline from "../EmptyPipeline";
 
 import styles from "./PipelineTable.module.css";
 
 export default function PipelineTable({
 
-    pipeline = [],
-
-    loading = false,
-
-    onView,
-    onReindex
+    documents = []
 
 }) {
-
-    if (loading) {
-
-        return (
-
-            <div className={styles.wrapper}>
-
-                {
-
-                    Array.from({ length: 5 }).map((_, index) => (
-
-                        <div
-
-                            key={index}
-
-                            className={styles.skeleton}
-
-                        />
-
-                    ))
-
-                }
-
-            </div>
-
-        );
-
-    }
-
-    if (pipeline.length === 0) {
-
-        return (
-
-            <EmptyPipeline />
-
-        );
-
-    }
 
     return (
 
@@ -64,15 +20,19 @@ export default function PipelineTable({
 
                         <th>Document</th>
 
-                        <th>Department</th>
+                        <th>Uploaded By</th>
 
                         <th>Chunks</th>
+
+                        <th>Extraction</th>
 
                         <th>Embedding</th>
 
                         <th>Vector DB</th>
 
                         <th>Status</th>
+
+                        <th>Updated</th>
 
                         <th>Actions</th>
 
@@ -84,21 +44,43 @@ export default function PipelineTable({
 
                     {
 
-                        pipeline.map(item => (
+                        documents.length === 0
 
-                            <PipelineRow
+                            ? (
 
-                                key={item.id}
+                                <tr>
 
-                                item={item}
+                                    <td
 
-                                onView={onView}
+                                        colSpan="9"
 
-                                onReindex={onReindex}
+                                        className={styles.empty}
 
-                            />
+                                    >
 
-                        ))
+                                        No pipeline records found.
+
+                                    </td>
+
+                                </tr>
+
+                            )
+
+                            : (
+
+                                documents.map(document => (
+
+                                    <PipelineRow
+
+                                        key={document._id}
+
+                                        document={document}
+
+                                    />
+
+                                ))
+
+                            )
 
                     }
 

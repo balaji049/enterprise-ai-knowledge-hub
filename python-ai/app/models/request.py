@@ -9,6 +9,8 @@ class ChatRequest(BaseModel):
 
     department: str
 
+    
+
 
 class IndexRequest(BaseModel):
 

@@ -224,3 +224,27 @@ ehthumbs.db
 ############################
 
 config.local.*
+
+
+# Node
+node_modules/
+npm-debug.log
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.env.*
+
+# Uploads
+server/src/uploads/
+
+# Vector DB
+python-ai/vectordb/
+
+# OS
+.DS_Store
+Thumbs.db

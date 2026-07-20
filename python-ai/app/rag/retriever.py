@@ -34,15 +34,10 @@ class Retriever:
         ):
 
             results.append({
-
                 "text": document,
-
                 "page": metadata["page"],
-
                 "document": metadata["document_name"],
-
                 "score": round(1 - distance, 3)
-
             })
 
         return results
@@ -54,7 +49,6 @@ class Retriever:
         for result in results:
 
             context.append(
-
                 f"""
 Document : {result['document']}
 Page : {result['page']}

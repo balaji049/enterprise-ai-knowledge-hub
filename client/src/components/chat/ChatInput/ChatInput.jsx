@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { SendHorizonal } from "lucide-react";
 
 import * as chatService from "../../../services/chat.service";
@@ -16,7 +15,9 @@ export default function ChatInput({
 
     loading,
 
-    setLoading
+    setLoading,
+
+    onConversationTitleChange
 
 }) {
 
@@ -32,13 +33,7 @@ export default function ChatInput({
 
         }
 
-        if (
-
-            !question.trim() ||
-
-            loading
-
-        ) return;
+        if (!question.trim() || loading) return;
 
         const userMessage = {
 
@@ -66,25 +61,36 @@ export default function ChatInput({
 
         try {
 
-            const result = await chatService.askAI(
+            const result = await chatService.askAI({
 
-                {
+                conversationId: selectedConversation,
 
-                    conversationId:
+                question: currentQuestion
 
-                        selectedConversation,
-
-                    question:
-
-                        currentQuestion
-
-                }
-
-            );
+            });
 
             if (!result) {
 
                 throw new Error("No response returned.");
+
+            }
+
+            // ⭐ Update conversation title immediately
+            if (
+
+                result.conversation_title &&
+
+                onConversationTitleChange
+
+            ) {
+
+                onConversationTitleChange(
+
+                    selectedConversation,
+
+                    result.conversation_title
+
+                );
 
             }
 
@@ -184,23 +190,19 @@ export default function ChatInput({
 
             <button
 
-    disabled={loading || !question.trim()}
+                disabled={loading || !question.trim()}
 
-    onClick={handleSend}
+                onClick={handleSend}
 
->
+            >
 
                 {
 
                     loading
 
-                        ?
+                        ? "..."
 
-                        "..."
-
-                        :
-
-                        <SendHorizonal size={18} />
+                        : <SendHorizonal size={18} />
 
                 }
 

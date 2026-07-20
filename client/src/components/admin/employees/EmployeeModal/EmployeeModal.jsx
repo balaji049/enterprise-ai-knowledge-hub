@@ -4,6 +4,12 @@ import { X } from "lucide-react";
 
 import styles from "./EmployeeModal.module.css";
 
+const user = JSON.parse(
+
+    localStorage.getItem("user") || "{}"
+
+);
+
 const emptyEmployee = {
 
     employeeId: "",
@@ -12,7 +18,7 @@ const emptyEmployee = {
 
     email: "",
 
-    department: "",
+    department: user.department?._id || "",
 
     role: "employee",
 
@@ -40,19 +46,51 @@ export default function EmployeeModal({
 
             setForm({
 
-                employeeId: employee.employeeId,
+                employeeId: employee.employeeId || "",
 
-                name: employee.user?.fullName,
+                name:
 
-                email: employee.user?.email,
+                    employee.user?.fullName ||
 
-                department: employee.department?._id,
+                    employee.name ||
 
-                role: employee.user?.role,
+                    "",
 
-                designation: employee.designation,
+                email:
 
-                status: employee.status
+                    employee.user?.email ||
+
+                    employee.email ||
+
+                    "",
+
+                department:
+
+                    employee.department?._id ||
+
+                    employee.department ||
+
+                    "",
+
+                role:
+
+                    employee.user?.role ||
+
+                    employee.role ||
+
+                    "employee",
+
+                designation:
+
+                    employee.designation ||
+
+                    "Software Engineer",
+
+                status:
+
+                    employee.status ||
+
+                    "Active"
 
             });
 

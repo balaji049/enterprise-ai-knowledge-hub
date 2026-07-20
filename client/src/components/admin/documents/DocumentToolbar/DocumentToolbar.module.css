@@ -2,15 +2,17 @@
 
     display:flex;
 
+    gap:16px;
+
     align-items:center;
 
-    gap:16px;
+    margin-bottom:28px;
 
     flex-wrap:wrap;
 
 }
 
-.searchBox{
+.search{
 
     flex:1;
 
@@ -22,9 +24,9 @@
 
     gap:12px;
 
-    background:#FFFFFF;
+    background:#fff;
 
-    border:1px solid #E2E8F0;
+    border:1px solid #e2e8f0;
 
     border-radius:12px;
 
@@ -32,7 +34,7 @@
 
 }
 
-.searchBox input{
+.search input{
 
     flex:1;
 
@@ -40,45 +42,23 @@
 
     outline:none;
 
-    background:transparent;
-
     font-size:14px;
 
 }
 
-.selectBox{
+.toolbar select{
 
-    display:flex;
+    padding:12px;
 
-    align-items:center;
+    border-radius:10px;
 
-    gap:10px;
+    border:1px solid #e2e8f0;
 
-    padding:12px 14px;
-
-    background:#FFFFFF;
-
-    border:1px solid #E2E8F0;
-
-    border-radius:12px;
+    background:#fff;
 
 }
 
-.selectBox select{
-
-    border:none;
-
-    outline:none;
-
-    background:transparent;
-
-    cursor:pointer;
-
-    font-size:14px;
-
-}
-
-.uploadButton{
+.toolbar button{
 
     display:flex;
 
@@ -86,48 +66,16 @@
 
     gap:8px;
 
-    padding:12px 20px;
+    padding:12px 18px;
 
     border:none;
 
-    border-radius:12px;
+    border-radius:10px;
 
-    background:#2563EB;
+    background:#2563eb;
 
-    color:#FFFFFF;
+    color:#fff;
 
     cursor:pointer;
-
-    font-weight:600;
-
-    transition:.2s;
-
-}
-
-.uploadButton:hover{
-
-    background:#1D4ED8;
-
-}
-
-@media(max-width:768px){
-
-    .toolbar{
-
-        flex-direction:column;
-
-        align-items:stretch;
-
-    }
-
-    .searchBox,
-
-    .selectBox,
-
-    .uploadButton{
-
-        width:100%;
-
-    }
 
 }

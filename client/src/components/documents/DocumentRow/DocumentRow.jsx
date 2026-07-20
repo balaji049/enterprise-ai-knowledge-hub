@@ -2,7 +2,6 @@ import {
     FileText,
     Eye,
     Download,
-    Pencil,
     Trash2
 } from "lucide-react";
 
@@ -16,31 +15,47 @@ export default function DocumentRow({
 
     onDownload,
 
-    onRename,
-
     onDelete
 
 }) {
 
-    const statusClass =
+    const extension =
+        document.name
+            ?.split(".")
+            .pop()
+            ?.toUpperCase() || "FILE";
 
-        document.status === "Approved"
+    const uploadedAt = new Date(
+        document.createdAt
+    ).toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
 
-            ? styles.approved
+    const uploadedBy =
+        document.uploadedBy?.fullName ||
+        document.uploadedBy?.name ||
+        "IT Admin";
 
-            : document.status === "Pending"
+    const statusClass = {
 
-            ? styles.pending
+        Indexed: styles.indexed,
 
-            : styles.rejected;
+        Processing: styles.processing,
+
+        Failed: styles.failed
+
+    };
 
     return (
 
         <tr>
 
-            {/* ========================= */}
             {/* Document */}
-            {/* ========================= */}
 
             <td>
 
@@ -56,23 +71,15 @@ export default function DocumentRow({
 
                         <h4>
 
-                            {document.title}
+                            {document.name}
 
                         </h4>
 
-                        <span>
+                        <small>
 
-                            {document.fileType}
+                            {extension}
 
-                            {" • "}
-
-                            {document.fileSize}
-
-                            {" • v"}
-
-                            {document.version}
-
-                        </span>
+                        </small>
 
                     </div>
 
@@ -80,63 +87,53 @@ export default function DocumentRow({
 
             </td>
 
-            {/* ========================= */}
-            {/* Department */}
-            {/* ========================= */}
+            {/* File Type */}
 
             <td>
 
-                {document.department}
+                {extension}
 
             </td>
 
-            {/* ========================= */}
-            {/* Category */}
-            {/* ========================= */}
+            {/* File Size */}
 
             <td>
 
-                <span className={styles.category}>
+                {
 
-                    {document.category}
+                    document.fileSize
 
-                </span>
+                        ? `${(document.fileSize / 1024 / 1024).toFixed(2)} MB`
+
+                        : "--"
+
+                }
 
             </td>
 
-            {/* ========================= */}
             {/* Uploaded By */}
-            {/* ========================= */}
 
             <td>
 
-                <div className={styles.user}>
-
-                    <strong>
-
-                        {document.uploadedBy}
-
-                    </strong>
-
-                    <small>
-
-                        {document.uploadedAt}
-
-                    </small>
-
-                </div>
+                {uploadedBy}
 
             </td>
 
-            {/* ========================= */}
+            {/* Upload Date */}
+
+            <td>
+
+                {uploadedAt}
+
+            </td>
+
             {/* Status */}
-            {/* ========================= */}
 
             <td>
 
                 <span
 
-                    className={`${styles.status} ${statusClass}`}
+                    className={`${styles.status} ${statusClass[document.status] || styles.processing}`}
 
                 >
 
@@ -146,9 +143,7 @@ export default function DocumentRow({
 
             </td>
 
-            {/* ========================= */}
             {/* Actions */}
-            {/* ========================= */}
 
             <td>
 
@@ -183,22 +178,6 @@ export default function DocumentRow({
                     >
 
                         <Download size={16} />
-
-                    </button>
-
-                    <button
-
-                        title="Rename"
-
-                        onClick={() =>
-
-                            onRename?.(document)
-
-                        }
-
-                    >
-
-                        <Pencil size={16} />
 
                     </button>
 

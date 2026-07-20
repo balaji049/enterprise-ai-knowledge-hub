@@ -4,6 +4,7 @@ import Document from "../models/Document.js";
 import Conversation from "../models/Conversation.js";
 
 export const getDashboard = async () => {
+    console.log("ADMIN DASHBOARD SERVICE");
 
     const [
 
