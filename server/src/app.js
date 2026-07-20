@@ -15,14 +15,26 @@ const app = express();
    Middlewares
 ========================================= */
 
-app.use(cors({
+const allowedOrigins = [
+    "http://localhost:3000",
+    process.env.CLIENT_URL
+];
 
-    origin: "http://localhost:3000",
+app.use(
+    cors({
+        origin(origin, callback) {
+            // Allow requests with no origin (Postman, server-to-server)
+            if (!origin) return callback(null, true);
 
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
 
-    credentials: true
-
-}));
+            return callback(new Error("Not allowed by CORS"));
+        },
+        credentials: true
+    })
+);
 
 app.use(express.json());
 
