@@ -58,7 +58,7 @@ export default function DocumentList({
 
                                 <p>
 
-                                    {document.department}
+                                    {document.department?.name || "—"}
 
                                 </p>
 

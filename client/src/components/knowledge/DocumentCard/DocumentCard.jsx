@@ -122,7 +122,7 @@ export default function DocumentCard({
 
                         <Building2 size={14}/>
 
-                        {document.department}
+                        {document.department?.name || "—"}
 
                     </span>
 
@@ -138,7 +138,7 @@ export default function DocumentCard({
 
                         <User size={14}/>
 
-                        {document.uploadedBy}
+                        {document.uploadedBy?.fullName || "—"}
 
                     </span>
 

@@ -4,18 +4,6 @@ import Document from "../models/Document.js";
 import * as pythonService from "./python.service.js";
 import { logActivity } from "./activityLogger.service.js";
 
-const buildFileUrl = filePath => {
-
-    if (!filePath) return null;
-
-    const relativePath = filePath
-        .replace(/^src[\\/]/, "")
-        .replace(/\\/g, "/");
-
-    return `http://localhost:5000/${relativePath}`;
-
-};
-
 export const uploadAndIndexDocument = async (
 
     data,
@@ -123,39 +111,17 @@ export const uploadAndIndexDocument = async (
 };
 
 export const getDocuments = async (departmentId) => {
-
-    const documents = await Document
-
+    return await Document
         .find({
-
             department: departmentId
-
         })
-
         .populate(
-
             "department"
-
         )
-
         .populate(
-
             "uploadedBy",
-
             "fullName"
-
         );
-
-    return documents.map(document => {
-
-        const payload = document.toObject();
-
-        payload.fileUrl = buildFileUrl(payload.filePath);
-
-        return payload;
-
-    });
-
 };
 
 export const getDocument = async (

@@ -26,29 +26,27 @@ const buildFileUrl = (req, filePath) => {
 };
 
 export const getDocuments = asyncHandler(
-
     async (req, res) => {
-
         const documents =
-
             await documentService.getDocuments(
-
                 req.user.department._id
-
             );
-
+        const payload = documents.map(document => {
+            const item = document.toObject();
+            item.fileUrl =
+                buildFileUrl(
+                    req,
+                    item.filePath
+                );
+            delete item.filePath;
+            return item;
+        });
         successResponse(
-
             res,
-
             "Documents fetched successfully",
-
-            documents
-
+            payload
         );
-
     }
-
 );
 
 export const uploadDocument = asyncHandler(
