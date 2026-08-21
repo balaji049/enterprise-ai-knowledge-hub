@@ -13,16 +13,18 @@ import {
 } from "../utils/apiResponse.js";
 
 const buildFileUrl = (req, filePath) => {
-
     if (!filePath) return null;
 
     const relativePath = path
         .normalize(filePath)
         .replace(/^src[\\/]/, "")
-        .replace(/\\/g, "/");
+        .replace(/[\\/]/g, "/");
 
-    return `${req.protocol}://${req.get("host")}/${relativePath}`;
+    const protocol =
+        req.headers["x-forwarded-proto"]?.split(",")[0] ||
+        req.protocol;
 
+    return `${protocol}://${req.get("host")}/${relativePath}`;
 };
 
 export const getDocuments = asyncHandler(
