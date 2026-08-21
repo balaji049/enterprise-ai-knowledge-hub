@@ -179,7 +179,7 @@ export default function PreviewModal({
 
                             <strong>
 
-                                {document.uploadedBy}
+                                {document.uploadedBy?.fullName || "—"}
 
                             </strong>
 
@@ -231,7 +231,7 @@ export default function PreviewModal({
 
                             <span>
 
-                                {document.department}
+                                {document.department?.name || "—"}
 
                             </span>
 
@@ -243,7 +243,7 @@ export default function PreviewModal({
 
                             <span>
 
-                                {document.uploadedBy}
+                                {document.uploadedBy?.fullName || "—"}
 
                             </span>
 

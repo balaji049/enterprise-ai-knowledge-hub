@@ -131,13 +131,13 @@ export default function RecentUploads({
 
                                     <p>
 
-                                        {document.department}
+                                        {document.department?.name || "—"}
 
                                     </p>
 
                                     <small>
 
-                                        Uploaded by {document.uploadedBy}
+                                        Uploaded by {document.uploadedBy?.fullName || "—"}
 
                                     </small>
 
