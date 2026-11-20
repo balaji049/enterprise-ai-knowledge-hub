@@ -6,7 +6,6 @@ Admins upload files like policies, guidelines, and manuals. The app breaks them 
 
 Live demo: https://enterprise-ai-knowledge-hub-client.onrender.com
 Source code: https://github.com/balaji049/enterprise-ai-knowledge-hub
-
 ---
 
 ## Why I built it
